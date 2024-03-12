@@ -13,37 +13,37 @@ contract Degen {
         owner = msg.sender;
     }
 
-    function mint(address to, uint256 amount) public {
+    function mint(address mintFor, uint256 amount) public {
         require(msg.sender == owner, "Only the contract owner can mint tokens.");
         require(amount > 0, "Amount must be greater than 0.");
-        balances[to] += amount;
+        balances[mintFor] += amount;
         totalSupply += amount;
     }
 
-    function burn(address from, uint256 amount) public {
-        require(amount <= balances[from], "Amount exceeds balance.");
-        balances[from] -= amount;
+    function burn(address burnFrom, uint256 amount) public {
+        require(amount <= balances[burnFrom], "Amount exceeds balance.");
+        balances[burnFrom] -= amount;
         totalSupply -= amount;
     }
 
-    function transfer(address to, uint256 amount) public {
+    function transfer(address transferTo, uint256 amount) public {
         require(amount <= balances[msg.sender], "Amount exceeds balance.");
         balances[msg.sender] -= amount;
-        balances[to] += amount;
+        balances[transferTo] += amount;
     }
 
-    function redeem(address to, uint256 amount, uint256 gameItem) public { 
+    function redeem(address to, uint256 amount, string calldata gameItem) public { 
         require(amount <= balances[to], "Amount exceeds balance");
 
-        if (gameItem == 1) {
+        if(keccak256(abi.encodePacked(gameItem)) == keccak256(abi.encodePacked("sword"))) {
             require(amount >= 50, "Insufficient tokens for Game Item 1");
             burn(to, amount);
         } 
-        else if (gameItem == 2) {
+        else if(keccak256(abi.encodePacked(gameItem)) == keccak256(abi.encodePacked("shield"))) {
             require(amount >= 100, "Insufficient tokens for Game Item 2");
             burn(to, amount);
         } 
-        else if (gameItem == 3) {
+        else if(keccak256(abi.encodePacked(gameItem)) == keccak256(abi.encodePacked("potion"))) {
             require(amount>=200, "Insufficient tokens for Game Item 3");
             burn(to, amount);
         } 
